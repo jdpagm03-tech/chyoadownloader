@@ -1,0 +1,6 @@
+services:
+  edge-tts:
+    build: .
+    ports:
+      - "1102:1102"
+    restart: unless-stopped

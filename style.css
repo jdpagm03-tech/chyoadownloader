@@ -1,0 +1,274 @@
+/* ===================== THEME VARIABLES ===================== */
+:root {
+  --bg: #0f1115;
+  --panel: #151922;
+  --panel-soft: #1b2030;
+  --border: #262b36;
+  --text: #e6e6eb;
+  --muted: #9aa0aa;
+  --accent: #4da3ff;
+  --accent-hover: #6bb6ff;
+
+  --success: #4caf50;
+  --warning: #f0c674;
+  --error: #f44336;
+}
+
+/* ===================== RESET ===================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 30px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.6;
+}
+
+/* ===================== HEADINGS ===================== */
+h2 {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* ===================== FORM ELEMENTS ===================== */
+label {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+textarea,
+input {
+  width: 100%;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 0.95rem;
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+textarea:focus,
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ===================== BUTTONS ===================== */
+button {
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: var(--accent);
+  color: #000;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+button:hover {
+  background: var(--accent-hover);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+button.secondary:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ===================== DOWNLOAD SECTION ===================== */
+.download-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+/* ===================== FORMAT TABLE (REWORKED) ===================== */
+.format-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.format-table thead {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.format-table th {
+  padding: 12px 14px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-align: left;
+}
+
+.format-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.format-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.format-table td {
+  padding: 14px;
+  border-top: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+/* Select (Radio) */
+.format-table td:first-child {
+  width: 48px;
+  text-align: center;
+}
+
+/* Format */
+.format-table td:nth-child(2) {
+  width: 90px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Description */
+.format-table td:nth-child(3) {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ===================== RADIO BUTTONS ===================== */
+input[type="radio"] {
+  transform: scale(1.1);
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* ===================== TOC CARD ===================== */
+.toc-card {
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.toc-card strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.toc-card p {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.toc-card label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 18px;
+  font-size: 0.9rem;
+}
+
+/* ===================== STATUS ===================== */
+#progress {
+  margin-top: 15px;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+#log {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ===================== PROXY STATUS ===================== */
+.proxy-status {
+  font-size: 0.9rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.proxy-status span {
+  font-weight: 600;
+}
+
+.proxy-status .checking {
+  color: var(--warning);
+}
+
+.proxy-status .ok {
+  color: var(--success);
+}
+
+.proxy-status .fail {
+  color: var(--error);
+}
+
+/* ===================== PREVIEW ===================== */
+#preview {
+  margin-top: 40px;
+}
+
+.chapter {
+  margin-bottom: 40px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid var(--border);
+}
+
+.chapter h3,
+.chapter-title {
+  margin-top: 0;
+  font-size: 1.3rem;
+  font-weight: 600
+.chapter h3,
+.chapter-title {
+  margin-top: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* ===================== LINKS ===================== */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ===================== MISC ===================== */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

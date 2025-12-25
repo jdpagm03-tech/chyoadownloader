@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CHYOA Story Downloader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <h2>CHYOA Story Downloader</h2>
+
+  <!-- ===================== INPUT ===================== -->
+  <label for="url">Last Chapter URL</label>
+  <textarea
+    id="url"
+    placeholder="https://chyoa.com/chapter/..."
+  ></textarea>
+
+  <label for="filename">Filename (optional)</label>
+  <input
+    id="filename"
+    placeholder="my_story_name"
+  >
+
+  <!-- ===================== LOAD + PROXY STATUS ===================== -->
+  <div class="load-row" style="display:flex; align-items:center; gap:16px; margin-top:12px;">
+    <button id="loadBtn">Load Story</button>
+
+    <!-- ✅ LIVE PROXY STATUS -->
+    <div id="proxyStatus" class="proxy-status">
+      Proxy Status: <span class="checking">checking…</span>
+    </div>
+  </div>
+
+  <!-- ===================== DOWNLOAD SECTION ===================== -->
+  <div class="download-section" id="downloadSection" hidden>
+
+    <!-- FORMAT TABLE -->
+    <table class="format-table">
+      <thead>
+        <tr>
+          <th>Select</th>
+          <th>Format</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <input type="radio" name="format" value="html" checked>
+          </td>
+          <td>HTML</td>
+          <td>Preserves chapter structure and formatting.</td>
+        </tr>
+        <tr>
+          <td>
+            <input type="radio" name="format" value="txt">
+          </td>
+          <td>TXT</td>
+          <td>Plain text version (no styling).</td>
+        </tr>
+        <tr>
+          <td>
+            <input type="radio" name="format" value="mp3">
+          </td>
+          <td>MP3</td>
+          <td>Text‑to‑speech audio version.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ===================== TOC OPTIONS ===================== -->
+    <div class="toc-card">
+      <div>
+        <strong>Table of Contents</strong>
+        <p style="margin:4px 0 8px; font-size:0.9rem; opacity:0.8;">
+          Decide whether to include a chapter overview.
+        </p>
+      </div>
+
+      <label>
+        <input type="radio" name="toc" value="yes" checked>
+        Include
+      </label>
+      <label style="margin-left:12px;">
+        <input type="radio" name="toc" value="no">
+        Exclude
+      </label>
+    </div>
+
+    <!-- ===================== ACTION BUTTONS ===================== -->
+    <div class="button-row" style="margin-top:16px; display:flex; gap:12px;">
+      <button id="downloadBtn">Download Story</button>
+      <button id="clearCacheBtn" class="secondary">Clear Cache</button>
+    </div>
+
+  </div>
+
+  <!-- ===================== STATUS ===================== -->
+  <div id="progress"></div>
+  <div id="log"></div>
+
+  <!-- ===================== PREVIEW ===================== -->
+  <div id="preview"></div>
+
+  <!-- ===================== MODULE ENTRY ===================== -->
+  <script type="module">
+    import { init } from "./main.js";
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+
+</body>
+</html>
