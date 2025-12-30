@@ -10,22 +10,22 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 /* ===================== MIDDLEWARE ===================== */
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+/* ✅ WICHTIG: Statische Dateien erlauben */
 app.use(express.static(__dirname));
 
-/* ===================== INDEX ===================== */
+/* ===================== ROUTES ===================== */
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-/* ===================== TTS (BROWSER-SAFE STREAM) ===================== */
 app.post("/tts", async (req, res) => {
   try {
-    const text = req.body.text;
+    const { text } = req.body;
 
-    if (!text || !text.trim()) {
-      return res.status(400).send("No text provided");
+    if (!text || text.trim() === "") {
+      return res.status(400).send("Kein Text übergeben");
     }
 
     const tts = new UniversalEdgeTTS(
@@ -34,19 +34,19 @@ app.post("/tts", async (req, res) => {
     );
 
     const result = await tts.synthesize();
-
-    res.setHeader("Content-Type", "audio/mpeg");
-    res.setHeader(
-      "Content-Disposition",
-      'attachment; filename="story.mp3"'
+    const audioBuffer = Buffer.from(
+      await result.audio.arrayBuffer()
     );
 
-    // ✅ EIN valider MP3-Stream
-    result.audio.pipe(res);
+    res.set({
+      "Content-Type": "audio/mpeg",
+      "Content-Disposition": "attachment; filename=speech.mp3"
+    });
 
+    res.send(audioBuffer);
   } catch (err) {
     console.error(err);
-    res.status(500).send("TTS error");
+    res.status(500).send("TTS-Fehler");
   }
 });
 
