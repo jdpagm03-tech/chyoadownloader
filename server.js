@@ -9,44 +9,53 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-/* ===================== MIDDLEWARE ===================== */
 app.use(bodyParser.json());
-
-/* ✅ WICHTIG: Statische Dateien erlauben */
 app.use(express.static(__dirname));
 
-/* ===================== ROUTES ===================== */
+/* ===================== HTML ===================== */
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
+/* ===================== PRO-LEVEL TTS STREAM ===================== */
 app.post("/tts", async (req, res) => {
   try {
-    const { text } = req.body;
+    const { chapters } = req.body;
 
-    if (!text || text.trim() === "") {
-      return res.status(400).send("Kein Text übergeben");
+    if (!Array.isArray(chapters) || !chapters.length) {
+      return res.status(400).send("No chapters provided");
     }
 
-    const tts = new UniversalEdgeTTS(
-      text,
-      "en-US-AvaNeural"
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="story.mp3"'
     );
 
-    const result = await tts.synthesize();
-    const audioBuffer = Buffer.from(
-      await result.audio.arrayBuffer()
-    );
+    // ✅ Stream immediately
+    for (let i = 0; i < chapters.length; i++) {
+      const text = chapters[i];
 
-    res.set({
-      "Content-Type": "audio/mpeg",
-      "Content-Disposition": "attachment; filename=speech.mp3"
-    });
+      const tts = new UniversalEdgeTTS(
+        text,
+        "en-US-AvaNeural"
+      );
 
-    res.send(audioBuffer);
+      const result = await tts.synthesize();
+
+      // ✅ Pipe chapter audio directly to response
+      await new Promise((resolve, reject) => {
+        result.audio.on("end", resolve);
+        result.audio.on("error", reject);
+        result.audio.pipe(res, { end: false });
+      });
+    }
+
+    res.end();
+
   } catch (err) {
     console.error(err);
-    res.status(500).send("TTS-Fehler");
+    res.status(500).send("TTS streaming error");
   }
 });
 
