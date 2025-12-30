@@ -11,6 +11,7 @@ import {
   clearPreview,
   setProxyStatus
 } from "./ui.js";
+import { checkProxyHealth } from "./fetcher.js";
 import {
   shouldIncludeToc,
   getSelectedFormat,
@@ -19,19 +20,14 @@ import {
   chaptersToTtsText,
   downloadBlob
 } from "./exporter.js";
-import { checkProxyHealth } from "./fetcher.js";
 
 export function init() {
 
   /* ===================== PROXY STATUS ===================== */
   (async () => {
-    try {
-      setProxyStatus("checking");
-      const ok = await checkProxyHealth();
-      setProxyStatus(ok ? "ok" : "fail");
-    } catch {
-      setProxyStatus("fail");
-    }
+    setProxyStatus("checking");
+    const ok = await checkProxyHealth();
+    setProxyStatus(ok ? "ok" : "fail");
   })();
 
   /* ===================== LOAD STORY ===================== */
@@ -42,14 +38,8 @@ export function init() {
 
     try {
       const chapters = await scrapeFromEnd(dom.url.value.trim());
-
-      if (!chapters || !chapters.length) {
-        throw new Error("No chapters found");
-      }
-
       cacheStory(chapters);
       renderChapters(chapters);
-
     } catch (e) {
       dom.log.innerText = "Failed to load story.";
       console.error(e);
@@ -65,57 +55,57 @@ export function init() {
   };
 
   /* ===================== DOWNLOAD ===================== */
-  dom.downloadBtn.onclick = () => {
+  dom.downloadBtn.onclick = async () => {
     const chapters = loadCachedStory();
-    if (!chapters || !chapters.length) {
-      dom.log.innerText = "No cached story available.";
-      return;
-    }
+    if (!chapters) return;
 
     const includeToc = shouldIncludeToc();
     const format = getSelectedFormat();
 
-    /* ---------- TXT ---------- */
-    if (format === "txt") {
-      const text = chaptersToPlainText(chapters, includeToc);
-      downloadBlob(text, "text/plain", "txt", chapters);
-      return;
-    }
+    try {
+      if (format === "txt") {
+        downloadBlob(
+          chaptersToPlainText(chapters, includeToc),
+          "text/plain",
+          "txt",
+          chapters
+        );
+        return;
+      }
 
-    /* ---------- HTML ---------- */
-    if (format === "html") {
-      const html = chaptersToHtmlDocument(chapters, includeToc);
-      downloadBlob(html, "text/html", "html", chapters);
-      return;
-    }
+      if (format === "html") {
+        downloadBlob(
+          chaptersToHtmlDocument(chapters, includeToc),
+          "text/html",
+          "html",
+          chapters
+        );
+        return;
+      }
 
-    /* ---------- MP3 (BROWSER-SAFE) ---------- */
-    if (format === "mp3") {
-      dom.log.innerText = "Generating MP3…";
+      if (format === "mp3") {
+        dom.log.innerText = "Generating MP3 via TTS…";
 
-      const ttsText = chaptersToTtsText(chapters, includeToc);
+        const res = await fetch("/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: chaptersToTtsText(chapters, includeToc)
+          })
+        });
 
-      // ✅ Native browser download (no fetch, no blob)
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = "/tts";
-      form.style.display = "none";
+        if (!res.ok) throw new Error("TTS failed");
 
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = "text";
-      input.value = ttsText;
+        downloadBlob(await res.blob(), "audio/mpeg", "mp3", chapters);
+      }
 
-      form.appendChild(input);
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
-
-      return;
+    } catch (e) {
+      dom.log.innerText = "Download failed.";
+      console.error(e);
     }
   };
 
-  /* ===================== RESTORE CACHE ===================== */
+  /* ===================== RESTORE (JETZT KORREKT) ===================== */
   const cached = loadCachedStory();
   if (cached?.length) {
     renderChapters(cached);
