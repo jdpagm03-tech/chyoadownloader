@@ -9,22 +9,31 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+/* ===================== MIDDLEWARE ===================== */
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
-/* ===================== HTML ===================== */
+/* ===================== INDEX ===================== */
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-/* ===================== PRO-LEVEL TTS STREAM ===================== */
+/* ===================== TTS (BROWSER-SAFE STREAM) ===================== */
 app.post("/tts", async (req, res) => {
   try {
-    const { chapters } = req.body;
+    const text = req.body.text;
 
-    if (!Array.isArray(chapters) || !chapters.length) {
-      return res.status(400).send("No chapters provided");
+    if (!text || !text.trim()) {
+      return res.status(400).send("No text provided");
     }
+
+    const tts = new UniversalEdgeTTS(
+      text,
+      "en-US-AvaNeural"
+    );
+
+    const result = await tts.synthesize();
 
     res.setHeader("Content-Type", "audio/mpeg");
     res.setHeader(
@@ -32,30 +41,12 @@ app.post("/tts", async (req, res) => {
       'attachment; filename="story.mp3"'
     );
 
-    // ✅ Stream immediately
-    for (let i = 0; i < chapters.length; i++) {
-      const text = chapters[i];
-
-      const tts = new UniversalEdgeTTS(
-        text,
-        "en-US-AvaNeural"
-      );
-
-      const result = await tts.synthesize();
-
-      // ✅ Pipe chapter audio directly to response
-      await new Promise((resolve, reject) => {
-        result.audio.on("end", resolve);
-        result.audio.on("error", reject);
-        result.audio.pipe(res, { end: false });
-      });
-    }
-
-    res.end();
+    // ✅ EIN valider MP3-Stream
+    result.audio.pipe(res);
 
   } catch (err) {
     console.error(err);
-    res.status(500).send("TTS streaming error");
+    res.status(500).send("TTS error");
   }
 });
 
