@@ -17,8 +17,7 @@ import {
   chaptersToPlainText,
   chaptersToHtmlDocument,
   chaptersToTtsText,
-  downloadBlob,
-  getFilename
+  downloadBlob
 } from "./exporter.js";
 import { checkProxyHealth } from "./fetcher.js";
 
@@ -66,7 +65,7 @@ export function init() {
   };
 
   /* ===================== DOWNLOAD ===================== */
-  dom.downloadBtn.onclick = async () => {
+  dom.downloadBtn.onclick = () => {
     const chapters = loadCachedStory();
     if (!chapters || !chapters.length) {
       dom.log.innerText = "No cached story available.";
@@ -76,61 +75,43 @@ export function init() {
     const includeToc = shouldIncludeToc();
     const format = getSelectedFormat();
 
-    try {
-      /* ---------- TXT ---------- */
-      if (format === "txt") {
-        const text = chaptersToPlainText(chapters, includeToc);
-        downloadBlob(text, "text/plain", "txt", chapters);
-        return;
-      }
+    /* ---------- TXT ---------- */
+    if (format === "txt") {
+      const text = chaptersToPlainText(chapters, includeToc);
+      downloadBlob(text, "text/plain", "txt", chapters);
+      return;
+    }
 
-      /* ---------- HTML ---------- */
-      if (format === "html") {
-        const html = chaptersToHtmlDocument(chapters, includeToc);
-        downloadBlob(html, "text/html", "html", chapters);
-        return;
-      }
+    /* ---------- HTML ---------- */
+    if (format === "html") {
+      const html = chaptersToHtmlDocument(chapters, includeToc);
+      downloadBlob(html, "text/html", "html", chapters);
+      return;
+    }
 
-      /* ---------- MP3 (PRO-LEVEL STREAMING) ---------- */
-      if (format === "mp3") {
-        dom.log.innerText = "Generating MP3 (streaming by chapter)…";
+    /* ---------- MP3 (BROWSER-SAFE) ---------- */
+    if (format === "mp3") {
+      dom.log.innerText = "Generating MP3…";
 
-        // ✅ Kapitelweise Texte vorbereiten
-        const chapterTexts = chapters.map((c, i) => {
-          const d = document.createElement("div");
-          d.innerHTML = c.body;
-          return `Chapter ${i + 1}. ${c.title}. ${d.innerText}`;
-        });
+      const ttsText = chaptersToTtsText(chapters, includeToc);
 
-        // ✅ Download sofort vorbereiten
-        const a = document.createElement("a");
-        a.download = getFilename("mp3", chapters);
+      // ✅ Native browser download (no fetch, no blob)
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "/tts";
+      form.style.display = "none";
 
-        fetch("/tts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chapters: chapterTexts })
-        })
-          .then(res => {
-            if (!res.ok) throw new Error("TTS request failed");
-            return res.blob();
-          })
-          .then(blob => {
-            a.href = URL.createObjectURL(blob);
-            a.click();
-            dom.log.innerText = "MP3 download started.";
-          })
-          .catch(err => {
-            dom.log.innerText = "MP3 generation failed.";
-            console.error(err);
-          });
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "text";
+      input.value = ttsText;
 
-        return;
-      }
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
 
-    } catch (e) {
-      dom.log.innerText = "Download failed.";
-      console.error(e);
+      return;
     }
   };
 
