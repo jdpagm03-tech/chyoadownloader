@@ -1,61 +1,83 @@
 /* ===================== PROXY POOL ===================== */
-/*
-  Multi-Proxy-Failover System
-  - Automatischer Wechsel bei Fehler
-  - Retry-Logik
-  - Health-Check kompatibel mit main.js
-*/
 
 const PROXIES = [
-  // Original Proxy (war vorher allein aktiv) [1]
-  url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+  // JSON Proxy (funktioniert)
+  {
+    name: "AllOrigins",
+    build: url =>
+      `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+    type: "json"
+  },
 
-  // Backup 1
-  url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+  // HTML Proxy
+  {
+    name: "CodeTabs",
+    build: url =>
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    type: "text"
+  },
 
-  // Backup 2
-  url => `https://corsproxy.io/?${encodeURIComponent(url)}`
+  // HTML Proxy
+  {
+    name: "CorsProxy",
+    build: url =>
+      `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+    type: "text"
+  }
 ];
 
 let activeProxyIndex = 0;
-const MAX_RETRIES = PROXIES.length;
 
-/* ===================== INTERNAL FETCH ===================== */
+/* ===================== FETCH CORE ===================== */
+
 async function tryFetch(url, proxyIndex) {
-  const proxyFn = PROXIES[proxyIndex];
-  const proxiedUrl = proxyFn(url);
+  const proxy = PROXIES[proxyIndex];
+  const proxiedUrl = proxy.build(url);
 
   const res = await fetch(proxiedUrl);
 
   if (!res.ok) {
-    throw new Error(`Proxy ${proxyIndex} responded with ${res.status}`);
+    throw new Error(`${proxy.name} responded with ${res.status}`);
   }
 
-  const json = await res.json();
+  // ✅ Unterschiedliche Verarbeitung je nach Proxy-Typ
+  if (proxy.type === "json") {
+    const json = await res.json();
 
-  if (!json?.contents || typeof json.contents !== "string") {
-    throw new Error("Invalid proxy response structure");
+    if (!json?.contents) {
+      throw new Error("Invalid JSON proxy response");
+    }
+
+    return json.contents;
   }
 
-  return json.contents;
+  if (proxy.type === "text") {
+    const text = await res.text();
+
+    if (!text || text.length < 50) {
+      throw new Error("Invalid HTML response");
+    }
+
+    return text;
+  }
+
+  throw new Error("Unknown proxy type");
 }
 
 /* ===================== PUBLIC FETCH ===================== */
-export async function fetchViaProxy(url) {
-  let attempt = 0;
 
-  while (attempt < MAX_RETRIES) {
+export async function fetchViaProxy(url) {
+  for (let i = 0; i < PROXIES.length; i++) {
     try {
       const result = await tryFetch(url, activeProxyIndex);
       return result;
     } catch (err) {
       console.warn(
-        `Proxy ${activeProxyIndex} failed. Switching to next proxy...`
+        `Proxy ${PROXIES[activeProxyIndex].name} failed. Switching...`
       );
 
-      // nächster Proxy (Round-Robin)
-      activeProxyIndex = (activeProxyIndex + 1) % PROXIES.length;
-      attempt++;
+      activeProxyIndex =
+        (activeProxyIndex + 1) % PROXIES.length;
     }
   }
 
@@ -63,17 +85,15 @@ export async function fetchViaProxy(url) {
 }
 
 /* ===================== HEALTH CHECK ===================== */
+
 export async function checkProxyHealth() {
   const testUrl = "https://example.com/";
 
   for (let i = 0; i < PROXIES.length; i++) {
     try {
-      const result = await tryFetch(testUrl, i);
-
-      if (typeof result === "string" && result.length > 0) {
-        activeProxyIndex = i;
-        return true;
-      }
+      await tryFetch(testUrl, i);
+      activeProxyIndex = i;
+      return true;
     } catch {
       continue;
     }
