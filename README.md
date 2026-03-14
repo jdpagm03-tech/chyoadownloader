@@ -1,4 +1,4 @@
-# Chyoadownloader
+# Chyoa Downloader
 
 ## Overview
 ChyoaDownloader is a Docker-based application that can be deployed using Portainer for easy management and orchestration.
@@ -47,5 +47,5 @@ http://localhost:1101
 - Configurable port mapping
 - Lightweight containerized solution
 
-## Note
+## Notes
 - MP3 download funktion is still experimental
