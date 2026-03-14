@@ -19,7 +19,7 @@ The tool can be used to download a Chyoa.com story, by pasting the URL of the la
 - `Proxiy` rotation and health check
 - Easy `Docker` deployment with Portainer (automatic restart policy, configurable port mapping, lightweight containerized solution
 
-## Portainer Deployment Guide
+## Portainer Integration Guide
 
 ### Step 1: Build the docker image
  - Open the environment in which you wish to create your stack
@@ -29,7 +29,9 @@ The tool can be used to download a Chyoa.com story, by pasting the URL of the la
  - Select `Build the image`
 
 ### Step 2: Docker Compose Configuration
-Create a Docker Compose service with the following configuration:
+- Select `Add Stack` under the `Stacks` tab
+- `Name` your Stack something like `CHYOA Story Downloader`
+- add the `Docker Compose` service with the following configuration:
 
 ```yaml
 services:
@@ -43,6 +45,8 @@ services:
 **Port Mapping Explanation:**
 - `1101` - External port (access from host machine)
 - `1102` - Internal container port
+
+- `Deploy` the stack
 
 ### Step 3: Access the Application
 Once deployed, access ChyoaDownloader at:
