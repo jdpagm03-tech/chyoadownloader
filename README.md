@@ -11,8 +11,13 @@ The tool can be used to download a Chyoa.com story, by pasting the URL of the la
 
 ## Portainer Deployment Guide
 
-### Step 1: Upload Docker Image
-Upload the `chyoa-downloader-v2:latest` image to your Docker registry or local Docker daemon.
+### Step 1: Build the docker image
+** Portainer **
+ - Open the environment in which you wish to create your stack
+ - Select `Build a new image` under your 'Images' tab
+ - Incert under `Names` the name you wish to call your image (in my case `chyoadownloaderimage`)
+ - Select `URL` and incert the following link `https://github.com/jdpagm03-tech/chyoadownloader.git`
+ - Select `Build the image`
 
 ### Step 2: Docker Compose Configuration
 Create a Docker Compose service with the following configuration:
@@ -20,7 +25,7 @@ Create a Docker Compose service with the following configuration:
 ```yaml
 services:
   chyoadownloader:
-    image: chyoa-downloader-v2:latest
+    image: chyoadownloaderimage:latest
     ports:
       - "1101:1102"  # Port mapping can be adjusted here
     restart: unless-stopped
