@@ -60,3 +60,5 @@ http://localhost:1101
 ## Notes
 - MP3 download funktion is still experimental
 - the availability of proxies may impact the performance
+** **
+Works as described (March 14, 2026)
