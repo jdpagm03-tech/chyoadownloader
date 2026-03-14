@@ -35,6 +35,3 @@ http://localhost:1101
 - Automatic restart policy
 - Configurable port mapping
 - Lightweight containerized solution
-
-## Support
-For issues or questions, please open an issue in the repository.
