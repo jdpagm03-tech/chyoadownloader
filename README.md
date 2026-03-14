@@ -15,7 +15,6 @@ The tool can be used to download a Chyoa.com story, by pasting the URL of the la
 ## Portainer Deployment Guide
 
 ### Step 1: Build the docker image
-** Portainer **
  - Open the environment in which you wish to create your stack
  - Select `Build a new image` under your 'Images' tab
  - Incert under `Names` the name you wish to call your image (in my case `chyoadownloaderimage`)
