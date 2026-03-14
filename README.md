@@ -1,4 +1,4 @@
-# Chyoa Downloader
+# CHYOA Story Downloader
 
 ## Overview
 ChyoaDownloader is a Docker-based application that can be deployed using Portainer for easy management and orchestration.
