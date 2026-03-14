@@ -9,6 +9,9 @@ The tool can be used to download a Chyoa.com story, by pasting the URL of the la
 - TXT
 - MP3 (Experimental)
 
+## Screenshot
+![Project Screenshot](misc./screenshot.png)
+
 ## Portainer Deployment Guide
 
 ### Step 1: Build the docker image
