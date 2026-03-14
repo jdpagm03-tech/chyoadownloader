@@ -10,8 +10,9 @@ The tool can be used to download a Chyoa.com story, by pasting the URL of the la
 - MP3 (Experimental)
 
 ## Screenshot
+** **
 ![Project Screenshot](misc./screenshot.png)
-
+** **
 ## Features
 - `Story preview` before download
 - Optional `Table of Contents` checkbox
