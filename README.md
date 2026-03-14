@@ -12,6 +12,13 @@ The tool can be used to download a Chyoa.com story, by pasting the URL of the la
 ## Screenshot
 ![Project Screenshot](misc./screenshot.png)
 
+## Features
+- `Story preview` before download
+- Optional `Table of Contents` checkbox
+- `Cache` funktion
+- `Proxiy` rotation and health check
+- Easy `Docker` deployment with Portainer (automatic restart policy, configurable port mapping, lightweight containerized solution
+
 ## Portainer Deployment Guide
 
 ### Step 1: Build the docker image
@@ -43,11 +50,7 @@ Once deployed, access ChyoaDownloader at:
 http://localhost:1101
 ```
 
-## Features
-- Easy Docker deployment with Portainer
-- Automatic restart policy
-- Configurable port mapping
-- Lightweight containerized solution
+
 
 ## Notes
 - MP3 download funktion is still experimental
