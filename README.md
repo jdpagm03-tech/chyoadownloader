@@ -16,7 +16,7 @@ The tool can be used to download a Chyoa.com story, by pasting the URL of the la
 
 ### Step 1: Build the docker image
  - Open the environment in which you wish to create your stack
- - Select `Build a new image` under your 'Images' tab
+ - Select `Build a new image` under your `Images` tab
  - Incert under `Names` the name you wish to call your image (in my case `chyoadownloaderimage`)
  - Select `URL` and incert the following link `https://github.com/jdpagm03-tech/chyoadownloader.git`
  - Select `Build the image`
