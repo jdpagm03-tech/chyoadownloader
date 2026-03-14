@@ -32,7 +32,7 @@ The tool can be used to download a Chyoa.com story, by pasting the URL of the la
 - Select `Add Stack` under the `Stacks` tab
 - `Name` your Stack something like `CHYOA Story Downloader`
 - add the `Docker Compose` service with the following configuration:
-**
+** **
 ```yaml
 services:
   chyoadownloader:
@@ -45,7 +45,7 @@ services:
 **Port Mapping Explanation:**
 - `1101` - External port (access from host machine)
 - `1102` - Internal container port
-**
+** **
 - `Deploy` the stack
 
 ### Step 3: Access the Application
