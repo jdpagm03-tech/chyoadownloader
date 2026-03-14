@@ -4,6 +4,11 @@
 ChyoaDownloader is a Docker-based application that can be deployed using Portainer for easy management and orchestration.
 The tool can be used to download a Chyoa.com story, by pasting the URL of the last story branch into the intended input box.
 
+### Currently avialable download formats are:
+### HTML
+### TXT
+### MP3 (Experimental)
+
 ## Portainer Deployment Guide
 
 ### Step 1: Upload Docker Image
