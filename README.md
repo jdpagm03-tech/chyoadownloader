@@ -62,3 +62,12 @@ http://localhost:1101
 - the availability of proxies may impact the performance
 ** **
 Works as described (March 14, 2026)
+
+---
+
+## ⚠️ Disclaimer
+
+This tool is intended for personal use.  
+Respect CHYOA's terms of service and content guidelines.
+
+---
